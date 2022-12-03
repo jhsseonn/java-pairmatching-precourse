@@ -1,7 +1,5 @@
 package pairmatching.domain;
 
-import jdk.internal.util.xml.impl.Pair;
-
 import java.util.List;
 
 public class PairMatching {
@@ -14,4 +12,6 @@ public class PairMatching {
         this.level = level;
         this.crew = crew;
     }
+
+
 }
