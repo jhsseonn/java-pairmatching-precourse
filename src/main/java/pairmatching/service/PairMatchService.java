@@ -12,7 +12,7 @@ public class PairMatchService {
 
     public List<String> backCrewList = new ArrayList<>();
     public List<String> frontCrewList = new ArrayList<>();
-    public List<String> crewList = new ArrayList<>();
+    List<String> crewList = new ArrayList<>();
 
     public List<String> getCrewList(String fileName) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
