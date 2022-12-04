@@ -11,6 +11,12 @@ public class InputView {
     }
 
     public String getPairMenu() {
+        outputView.printMatchMenu();
+        outputView.printSelectMatch();
+        return Console.readLine();
+    }
+
+    public String getPairMenuWhenExist() {
         outputView.printSelectMatch();
         return Console.readLine();
     }
