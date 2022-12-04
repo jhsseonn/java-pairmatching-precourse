@@ -18,6 +18,13 @@ public class PairMatchController extends StringParams {
 
     PairMatchService pairMatchService = new PairMatchService();
 
+    InputView inputView = new InputView();
+
+    public void pairMatchStart() {
+        String matchFeat = inputView.getPairMatchFeat();
+        matchingFeature(matchFeat);
+    }
+
     public void matchingFeature(String matchFeat) {
         if (matchFeat.equals("1")) {
             pairMatchCreate();
