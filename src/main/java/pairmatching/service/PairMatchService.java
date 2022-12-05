@@ -12,9 +12,10 @@ public class PairMatchService {
 
     public List<String> backCrewList = new ArrayList<>();
     public List<String> frontCrewList = new ArrayList<>();
-    List<String> crewList = new ArrayList<>();
+    List<String> shuffledCrewList = new ArrayList<>();
 
     public List<String> getCrewList(String fileName) throws IOException {
+        List<String> crewList = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
 
         String str;
@@ -24,12 +25,12 @@ public class PairMatchService {
 
         reader.close();
 
-        setRandomCrewList(crewList);
+        shuffledCrewList = setRandomCrewList(crewList);
 
-        return crewList;
+        return shuffledCrewList;
     }
 
-    public void setRandomCrewList(List<String> crew) {
-        Randoms.shuffle(crew);
+    public List<String> setRandomCrewList(List<String> crew) {
+        return Randoms.shuffle(crew);
     }
 }
