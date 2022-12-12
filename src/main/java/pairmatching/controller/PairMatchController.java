@@ -9,6 +9,7 @@ import pairmatching.service.PairMatchService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,9 +46,10 @@ public class PairMatchController extends StringParams {
         String[] matchFeatList = (inputView.getPairMenu()).split(", ");
         HashMap<List<String>, List<String>> crewLists = new HashMap<>();
         List<String> crewList = new ArrayList<>();
-        if (checkIsCourseAvailable(matchFeatList[0])) {
+        if (checkIsCourseAvailable(matchFeatList[0]) && checkIsLevelAvailable(matchFeatList[1])) {
             crewList = checkCourse(matchFeatList[0]);
         }
+
     }
 
     public void pairMatchRead() {
@@ -81,6 +83,30 @@ public class PairMatchController extends StringParams {
         if (chosenCourse.equals((Course.valueOf("FRONTEND")).getName())) {
             isAvailable = true;
         }
+        //일치하는 경우가 없을시(isAvailable이 false일 시) 에러메시지 출력 필요
+        return isAvailable;
+    }
+
+    public Boolean checkIsLevelAvailable(String chosenLevel) {
+        boolean isAvailable = false;
+        List<String> levelNames = new ArrayList<>();
+        for (Level level:Level.values()){
+            levelNames = Collections.singletonList(level.getName());
+        }
+        isAvailable = existsLevel(chosenLevel, levelNames);
+        return isAvailable;
+    }
+
+    public Boolean existsLevel(String chosenLevel, List<String> levelList) {
+        boolean isAvailable = false;
+        for (String levelName : levelList) {
+            if (chosenLevel.equals((Level.valueOf(levelName)).getName())) {
+                isAvailable = true;
+                break;
+            }
+        }
+        //일치하는 경우가 없을시(isAvailable이 false일 시) 에러메시지 출력 필요
+
         return isAvailable;
     }
 
