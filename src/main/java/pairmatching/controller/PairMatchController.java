@@ -5,23 +5,17 @@ import pairmatching.config.StringParams;
 import pairmatching.domain.Course;
 import pairmatching.domain.Level;
 import pairmatching.domain.Mission;
-import pairmatching.domain.PairMatching;
 import pairmatching.service.PairMatchService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class PairMatchController extends StringParams {
-    public Course course;
-    public Level level;
-    public PairMatching pairMatching;
 
     PairMatchService pairMatchService = new PairMatchService();
 
     InputView inputView = new InputView();
+    public HashMap<List<String>, List<List<String>>> crewLists = new HashMap<>();
 
     public void pairMatchStart() throws IOException {
         String matchFeat = inputView.getPairMatchFeat();
@@ -31,6 +25,7 @@ public class PairMatchController extends StringParams {
     public void matchingFeature(String matchFeat) throws IOException {
         if (matchFeat.equals("1")) {
             pairMatchCreate();
+            System.out.print(crewLists);
         }
         if (matchFeat.equals("2")) {
             pairMatchRead();
@@ -45,14 +40,15 @@ public class PairMatchController extends StringParams {
 
     public void pairMatchCreate() throws IOException {
         String[] matchFeatList = (inputView.getPairMenu()).split(", ");
-        HashMap<List<String>, List<String>> crewLists = new HashMap<>();
-        List<String> crewList = new ArrayList<>();
+        List<String> crewList;
+        List<List<String>> pairMatchList = new ArrayList<>();
         if (checkIsCourseAvailable(matchFeatList[0]) && checkIsLevelAvailable(matchFeatList[1])) {
             if (existsMission(matchFeatList[2], matchFeatList[1])) {
                 crewList = checkCourse(matchFeatList[0]);
+                pairMatchList = pairMatching(crewList);
             }
         }
-
+        crewLists.put(Arrays.asList(matchFeatList), pairMatchList);
     }
 
     public void pairMatchRead() {
@@ -72,7 +68,7 @@ public class PairMatchController extends StringParams {
         if (course.equals((Course.valueOf("BACKEND")).getName())) {
             crewList = pairMatchService.getCrewList("src/main/resources/backend-crew.md");
         }
-        if (course.equals((Course.valueOf("FRONT")).getName())) {
+        if (course.equals((Course.valueOf("FRONTEND")).getName())) {
             crewList = pairMatchService.getCrewList("src/main/resources/frontend-crew.md");
         }
         return crewList;
@@ -94,7 +90,7 @@ public class PairMatchController extends StringParams {
         boolean isAvailable = false;
         List<String> levelNames = new ArrayList<>();
         for (Level level:Level.values()){
-            levelNames = Collections.singletonList(level.getName());
+            levelNames.add(level.getName());
         }
         isAvailable = existsLevel(chosenLevel, levelNames);
         return isAvailable;
@@ -103,24 +99,20 @@ public class PairMatchController extends StringParams {
     public Boolean existsLevel(String chosenLevel, List<String> levelList) {
         boolean isAvailable = false;
         for (String levelName : levelList) {
-            if (chosenLevel.equals((Level.valueOf(levelName)).getName())) {
+            if (chosenLevel.equals(levelName)) {
                 isAvailable = true;
                 break;
             }
         }
         //일치하는 경우가 없을시(isAvailable이 false일 시) 에러메시지 출력 필요
-
         return isAvailable;
     }
 
     public Boolean existsMission(String mission, String level) {
         boolean isAvailable = false;
-        List<String> missionNames = new ArrayList<>();
-        for (Mission missions: Mission.values()) {
-            missionNames = Collections.singletonList(missions.getName());
-        }
-        for (String missionName: missionNames) {
-            if (mission.equals((Mission.valueOf(missionName)).getName()) && level.equals((Mission.valueOf(missionName)).getLevel())) {
+        List<Mission> missionEnums = new ArrayList<>(Arrays.asList(Mission.values()));
+        for (Mission missions: missionEnums) {
+            if (mission.equals(missions.getName()) && level.equals(missions.getLevel())) {
                 isAvailable = true;
                 break;
             }
@@ -128,39 +120,15 @@ public class PairMatchController extends StringParams {
         return isAvailable;
     }
 
-    public List<List<String>> getPairMatchingList(List<String> crewList) {
+    public List<List<String>> pairMatching(List<String> crewList) {
         List<List<String>> pairMatchList = new ArrayList<>();
         int crewNumber = 0;
-        if(crewList.size()%2==0) {
-            while(crewNumber<crewList.size()) {
-                List<String> pair = new ArrayList<>();
-                pair.add(crewList.get(crewNumber));
-                pair.add(crewList.get(crewNumber+1));
-                pairMatchList.add(pair);
-                crewNumber+=2;
-            }
-        }
-        if(crewList.size()%2!=0) {
-            while(crewNumber<crewList.size()) {
-                if (crewNumber==crewList.size()-1) {
-                    List<String> pair = pairMatchList.get(pairMatchList.size()-1);
-                    pair.add(crewList.get(crewNumber));
-                    pairMatchList.add(pairMatchList.size()-1, pair);
-                }
-                List<String> pair = new ArrayList<>();
-                pair.add(crewList.get(crewNumber));
-                pair.add(crewList.get(crewNumber+1));
-                pairMatchList.add(pair);
-                crewNumber+=2;
-            }
-        }
+        pairMatchList = getPairMatchList(crewList, crewNumber, pairMatchList);
 
         return pairMatchList;
     }
 
-    public List<List<String>> getPairMatchList(List<String> crewList) {
-        List<List<String>> pairMatchList = new ArrayList<>();
-        int crewNumber = 0;
+    public List<List<String>> getPairMatchList(List<String> crewList, int crewNumber, List<List<String>> pairMatchList) {
         while(crewNumber<crewList.size()) {
             if (crewNumber==crewList.size()-1) {
                 makeLastPair(pairMatchList, crewList, crewNumber);
@@ -175,7 +143,6 @@ public class PairMatchController extends StringParams {
     public void makeLastPair(List<List<String>> pairMatchList, List<String> crewList, int crewNumber) {
         List<String> pair = pairMatchList.get(pairMatchList.size()-1);
         pair.add(crewList.get(crewNumber));
-        pairMatchList.add(pairMatchList.size()-1, pair);
     }
 
     public void makePair(List<String> crewList, int crewNumber, List<List<String>> pairMatchList) {
