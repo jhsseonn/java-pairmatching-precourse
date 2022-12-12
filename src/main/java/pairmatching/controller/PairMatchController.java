@@ -1,6 +1,7 @@
 package pairmatching.controller;
 
 import pairmatching.config.InputView;
+import pairmatching.config.OutputView;
 import pairmatching.config.StringParams;
 import pairmatching.domain.Course;
 import pairmatching.domain.Level;
@@ -15,6 +16,7 @@ public class PairMatchController extends StringParams {
     PairMatchService pairMatchService = new PairMatchService();
 
     InputView inputView = new InputView();
+    OutputView outputView = new OutputView();
     public HashMap<List<String>, List<List<String>>> crewLists = new HashMap<>();
 
     public void pairMatchStart() throws IOException {
@@ -24,8 +26,10 @@ public class PairMatchController extends StringParams {
 
     public void matchingFeature(String matchFeat) throws IOException {
         if (matchFeat.equals("1")) {
-            pairMatchCreate();
-            System.out.print(crewLists);
+            if (!pairMatchCreate()){
+                outputView.cannotPairMatch();
+            }
+            pairMatchStart();
         }
         if (matchFeat.equals("2")) {
             pairMatchRead();
@@ -38,17 +42,34 @@ public class PairMatchController extends StringParams {
         }
     }
 
-    public void pairMatchCreate() throws IOException {
+    public Boolean pairMatchCreate() throws IOException {
+        int tryNumber = 0;
+        boolean success = false;
+        while(tryNumber<3) {
+            tryNumber+=1;
+            if (tryPairMatch()) {
+                success=true;
+                break;
+            }
+        }
+        return success;
+    }
+
+    public Boolean tryPairMatch() throws IOException {
+        boolean success = false;
         String[] matchFeatList = (inputView.getPairMenu()).split(", ");
         List<String> crewList;
-        List<List<String>> pairMatchList = new ArrayList<>();
+        List<List<String>> pairMatchList;
         if (checkIsCourseAvailable(matchFeatList[0]) && checkIsLevelAvailable(matchFeatList[1])) {
             if (existsMission(matchFeatList[2], matchFeatList[1])) {
                 crewList = checkCourse(matchFeatList[0]);
                 pairMatchList = pairMatching(crewList);
+                crewLists.put(Arrays.asList(matchFeatList), pairMatchList);
+                outputView.printMatchResult(crewLists.get(Arrays.asList(matchFeatList)));
+                success = true;
             }
         }
-        crewLists.put(Arrays.asList(matchFeatList), pairMatchList);
+        return success;
     }
 
     public void pairMatchRead() {
