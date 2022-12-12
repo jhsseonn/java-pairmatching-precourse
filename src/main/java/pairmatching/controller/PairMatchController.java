@@ -7,6 +7,9 @@ import pairmatching.domain.Level;
 import pairmatching.domain.PairMatching;
 import pairmatching.service.PairMatchService;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class PairMatchController extends StringParams {
@@ -14,18 +17,16 @@ public class PairMatchController extends StringParams {
     public Level level;
     public PairMatching pairMatching;
 
-    public List<String> crewList;
-
     PairMatchService pairMatchService = new PairMatchService();
 
     InputView inputView = new InputView();
 
-    public void pairMatchStart() {
+    public void pairMatchStart() throws IOException {
         String matchFeat = inputView.getPairMatchFeat();
         matchingFeature(matchFeat);
     }
 
-    public void matchingFeature(String matchFeat) {
+    public void matchingFeature(String matchFeat) throws IOException {
         if (matchFeat.equals("1")) {
             pairMatchCreate();
         }
@@ -40,8 +41,11 @@ public class PairMatchController extends StringParams {
         }
     }
 
-    public void pairMatchCreate() {
+    public void pairMatchCreate() throws IOException {
+        String[] matchFeatList = (inputView.getPairMenu()).split(", ");
+        HashMap<List<String>, List<String>> crewLists = new HashMap<>();
 
+        List<String> crewList = checkCourse(matchFeatList[0]);
     }
 
     public void pairMatchRead() {
@@ -54,6 +58,17 @@ public class PairMatchController extends StringParams {
 
     public void exitPairMatch() {
 
+    }
+
+    public List<String> checkCourse(String course) throws IOException{
+        List<String> crewList = new ArrayList<>();
+        if (course.equals((Course.valueOf("BACKEND")).getName())) {
+            crewList = pairMatchService.getCrewList("src/main/resources/backend-crew.md");
+        }
+        if (course.equals((Course.valueOf("FRONT")).getName())) {
+            crewList = pairMatchService.getCrewList("src/main/resources/frontend-crew.md");
+        }
+        return crewList;
     }
 
 }
