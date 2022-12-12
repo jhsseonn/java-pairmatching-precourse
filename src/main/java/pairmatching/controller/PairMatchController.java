@@ -4,6 +4,7 @@ import pairmatching.config.InputView;
 import pairmatching.config.StringParams;
 import pairmatching.domain.Course;
 import pairmatching.domain.Level;
+import pairmatching.domain.Mission;
 import pairmatching.domain.PairMatching;
 import pairmatching.service.PairMatchService;
 
@@ -47,7 +48,9 @@ public class PairMatchController extends StringParams {
         HashMap<List<String>, List<String>> crewLists = new HashMap<>();
         List<String> crewList = new ArrayList<>();
         if (checkIsCourseAvailable(matchFeatList[0]) && checkIsLevelAvailable(matchFeatList[1])) {
-            crewList = checkCourse(matchFeatList[0]);
+            if (existsMission(matchFeatList[2], matchFeatList[1])) {
+                crewList = checkCourse(matchFeatList[0]);
+            }
         }
 
     }
@@ -107,6 +110,21 @@ public class PairMatchController extends StringParams {
         }
         //일치하는 경우가 없을시(isAvailable이 false일 시) 에러메시지 출력 필요
 
+        return isAvailable;
+    }
+
+    public Boolean existsMission(String mission, String level) {
+        boolean isAvailable = false;
+        List<String> missionNames = new ArrayList<>();
+        for (Mission missions: Mission.values()) {
+            missionNames = Collections.singletonList(missions.getName());
+        }
+        for (String missionName: missionNames) {
+            if (mission.equals((Mission.valueOf(missionName)).getName()) && level.equals((Mission.valueOf(missionName)).getLevel())) {
+                isAvailable = true;
+                break;
+            }
+        }
         return isAvailable;
     }
 
