@@ -1,8 +1,6 @@
 package pairmatching.config;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class OutputView extends StringParams{
     public void printStartMatch() {
@@ -26,6 +24,10 @@ public class OutputView extends StringParams{
             }
             System.out.println(pair.get(0)+" : "+pair.get(1));
         }
+    }
+
+    public void cannotPairMatch() {
+        System.out.println(ERROR+"페어 매칭에 실패했습니다.");
     }
 
     public void printExistMatchHistory() {
