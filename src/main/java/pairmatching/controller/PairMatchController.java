@@ -44,8 +44,10 @@ public class PairMatchController extends StringParams {
     public void pairMatchCreate() throws IOException {
         String[] matchFeatList = (inputView.getPairMenu()).split(", ");
         HashMap<List<String>, List<String>> crewLists = new HashMap<>();
-
-        List<String> crewList = checkCourse(matchFeatList[0]);
+        List<String> crewList = new ArrayList<>();
+        if (checkIsCourseAvailable(matchFeatList[0])) {
+            crewList = checkCourse(matchFeatList[0]);
+        }
     }
 
     public void pairMatchRead() {
@@ -69,6 +71,17 @@ public class PairMatchController extends StringParams {
             crewList = pairMatchService.getCrewList("src/main/resources/frontend-crew.md");
         }
         return crewList;
+    }
+
+    public Boolean checkIsCourseAvailable(String chosenCourse) {
+        boolean isAvailable = false;
+        if (chosenCourse.equals((Course.valueOf("BACKEND")).getName())) {
+            isAvailable = true;
+        }
+        if (chosenCourse.equals((Course.valueOf("FRONTEND")).getName())) {
+            isAvailable = true;
+        }
+        return isAvailable;
     }
 
 }
