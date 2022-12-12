@@ -128,4 +128,34 @@ public class PairMatchController extends StringParams {
         return isAvailable;
     }
 
+    public List<List<String>> getPairMatchingList(List<String> crewList) {
+        List<List<String>> pairMatchList = new ArrayList<>();
+        int crewNumber = 0;
+        if(crewList.size()%2==0) {
+            while(crewNumber<crewList.size()) {
+                List<String> pair = new ArrayList<>();
+                pair.add(crewList.get(crewNumber));
+                pair.add(crewList.get(crewNumber+1));
+                pairMatchList.add(pair);
+                crewNumber+=2;
+            }
+        }
+        if(crewList.size()%2!=0) {
+            while(crewNumber<crewList.size()) {
+                if (crewNumber==crewList.size()-1) {
+                    List<String> pair = pairMatchList.get(pairMatchList.size()-1);
+                    pair.add(crewList.get(crewNumber));
+                    pairMatchList.add(pairMatchList.size()-1, pair);
+                }
+                List<String> pair = new ArrayList<>();
+                pair.add(crewList.get(crewNumber));
+                pair.add(crewList.get(crewNumber+1));
+                pairMatchList.add(pair);
+                crewNumber+=2;
+            }
+        }
+
+        return pairMatchList;
+    }
+
 }
