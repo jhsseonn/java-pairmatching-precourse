@@ -56,20 +56,9 @@ public class PairMatchController extends StringParams {
     }
 
     public Boolean tryPairMatch() throws IOException {
-        boolean success = false;
         String[] matchFeatList = (inputView.getPairMenu()).split(", ");
-        List<String> crewList;
-        List<List<String>> pairMatchList;
-        if (checkIsCourseAvailable(matchFeatList[0]) && checkIsLevelAvailable(matchFeatList[1])) {
-            if (existsMission(matchFeatList[2], matchFeatList[1])) {
-                crewList = checkCourse(matchFeatList[0]);
-                pairMatchList = pairMatching(crewList);
-                crewLists.put(Arrays.asList(matchFeatList), pairMatchList);
-                outputView.printMatchResult(crewLists.get(Arrays.asList(matchFeatList)));
-                success = true;
-            }
-        }
-        return success;
+        checkAlreayExist(Arrays.asList(matchFeatList));
+        return saveAsHashMap(Arrays.asList(matchFeatList));
     }
 
     public void pairMatchRead() {
@@ -82,6 +71,26 @@ public class PairMatchController extends StringParams {
 
     public void exitPairMatch() {
 
+    }
+
+    public void checkAlreayExist(List<String> matchFeatList) {
+        if (crewLists.containsKey(matchFeatList)) {
+            outputView.printExistMatchHistory();
+        }
+    }
+
+    public Boolean saveAsHashMap(List<String> matchFeatList) throws IOException {
+        boolean success = false;
+        if (checkIsCourseAvailable(matchFeatList.get(0)) && checkIsLevelAvailable(matchFeatList.get(1))) {
+            if (existsMission(matchFeatList.get(2), matchFeatList.get(1))) {
+                List<String> crewList = checkCourse(matchFeatList.get(0));
+                List<List<String>> pairMatchList = pairMatching(crewList);
+                crewLists.put(matchFeatList, pairMatchList);
+                outputView.printMatchResult(crewLists.get(matchFeatList));
+                success = true;
+            }
+        }
+        return success;
     }
 
     public List<String> checkCourse(String course) throws IOException{
@@ -103,7 +112,7 @@ public class PairMatchController extends StringParams {
         if (chosenCourse.equals((Course.valueOf("FRONTEND")).getName())) {
             isAvailable = true;
         }
-        //일치하는 경우가 없을시(isAvailable이 false일 시) 에러메시지 출력 필요
+        //일치하는 경우가 없을시(isAvailable이 false일 시) 예외처리 필요
         return isAvailable;
     }
 
@@ -114,6 +123,7 @@ public class PairMatchController extends StringParams {
             levelNames.add(level.getName());
         }
         isAvailable = existsLevel(chosenLevel, levelNames);
+        //예외처리 필요
         return isAvailable;
     }
 
@@ -125,7 +135,7 @@ public class PairMatchController extends StringParams {
                 break;
             }
         }
-        //일치하는 경우가 없을시(isAvailable이 false일 시) 에러메시지 출력 필요
+        //일치하는 경우가 없을시(isAvailable이 false일 시) 예외처리 필요
         return isAvailable;
     }
 
@@ -138,6 +148,7 @@ public class PairMatchController extends StringParams {
                 break;
             }
         }
+        //예외처리 필요
         return isAvailable;
     }
 
