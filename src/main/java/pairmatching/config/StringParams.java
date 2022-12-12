@@ -1,9 +1,7 @@
 package pairmatching.config;
 
 public class StringParams {
-    public final static String BACK_CREW_LIST = "backend-crew.md";
-    public final static String FRONT_CREW_LIST = "frontend-crew.md";
-    public final static String START_MATCHING = "기능을 선택하세요.\n" +
+    public final static String START_MATCHING = "\n기능을 선택하세요.\n" +
             "1. 페어 매칭\n" +
             "2. 페어 조회\n" +
             "3. 페어 초기화\n" +
@@ -23,4 +21,6 @@ public class StringParams {
     public final static String EXIST_MATCH_HISTORY = "매칭 정보가 있습니다. 다시 매칭하시겠습니까?\n" +
             "네 | 아니오\n";
     public final static String RESET_MATCH = "초기화 되었습니다.\n";
+
+    public final static String ERROR = "[ERROR] ";
 }
